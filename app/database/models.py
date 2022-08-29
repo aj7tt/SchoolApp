@@ -1,5 +1,4 @@
 
-from tokenize import Number
 from sqlalchemy import Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship
 
