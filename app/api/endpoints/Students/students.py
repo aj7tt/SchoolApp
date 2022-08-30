@@ -59,18 +59,3 @@ async def delete_Stu(stu_id: int, db: Session = Depends(get_db)):
     await StudentsRepo.delete(db, stu_id)
     return "student deleted successfully!"
 
-# @stu.put('/students/{student_id}', tags=["Students"],response_model=schemas.Students)
-# async def update_stuDetails(stu_id: int,item_request: schemas.Item, db: Session = Depends(get_db)):
-    """
-    Update an Item stored in the database
-    """
-    db_item = StudentsRepo.fetch_by_id(db, stu_id)
-    if db_item:
-        update_item_encoded = jsonable_encoder(item_request)
-        db_item.name = update_item_encoded['name']
-        db_item.price = update_item_encoded['price']
-        db_item.description = update_item_encoded['description']
-        db_item.store_id = update_item_encoded['store_id']
-        return await StudentsRepo.update(db=db, item_data=db_item)
-    else:
-        raise HTTPException(status_code=400, detail="Item not found with the given ID")
