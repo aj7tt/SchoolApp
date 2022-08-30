@@ -32,4 +32,13 @@ class StudentsRepo:
         updated_item = db.merge(item_data)
         db.commit()
         return updated_item
+
+
+class StaffsRepo:
     
+    async def create(db: Session, Staff: schemas.CreateStaff):
+        staff_details = models.Staff(name=Staff.name,gender=Staff.gender, MobileNo= Staff.MobileNo,address=Staff.address)
+        db.add(staff_details)
+        db.commit()
+        db.refresh(staff_details)
+        return staff_details    

@@ -37,25 +37,40 @@ def get_all_students(name: Optional[str] = None, db: Session = Depends(get_db)):
         return StudentsRepo.fetch_all(db)
 
 
-# @stu.get('/students/{student_id}', tags=["Students"], response_model=schemas.Students)
-# def get_item(item_id: int, db: Session = Depends(get_db)):
-#     """
-#     Get the Item with the given ID provided by User stored in database
-#     """
-#     studentsDetails = StudentsRepo.fetch_by_id(db, item_id)
-#     if studentsDetails is None:
-#         raise HTTPException(status_code=404, detail="students not found with the given ID")
-#     return studentsDetails
+@stu.get('/students/{student_id}', tags=["Students"], response_model=schemas.Students)
+def get_item(stu_id: int, db: Session = Depends(get_db)):
+    """
+    Get the student with the given ID provided by User stored in database
+    """
+    studentsDetails = StudentsRepo.fetch_by_id(db, stu_id)
+    if studentsDetails is None:
+        raise HTTPException(status_code=404, detail="students not found with the given ID")
+    return studentsDetails
 
 
 @stu.delete('/students/{student_id}', tags=["Students"])
-async def delete_Stu(item_id: int, db: Session = Depends(get_db)):
+async def delete_Stu(stu_id: int, db: Session = Depends(get_db)):
     """
     Delete the students with the given ID provided by User stored in database
     """
-    studentsDetails = StudentsRepo.fetch_by_id(db, item_id)
+    studentsDetails = StudentsRepo.fetch_by_id(db, stu_id)
     if studentsDetails is None:
         raise HTTPException(status_code=404, detail="student not found with the given ID")
-    await StudentsRepo.delete(db, item_id)
-    return "Item deleted successfully!"
+    await StudentsRepo.delete(db, stu_id)
+    return "student deleted successfully!"
 
+# @stu.put('/students/{student_id}', tags=["Students"],response_model=schemas.Students)
+# async def update_stuDetails(stu_id: int,item_request: schemas.Item, db: Session = Depends(get_db)):
+    """
+    Update an Item stored in the database
+    """
+    db_item = StudentsRepo.fetch_by_id(db, stu_id)
+    if db_item:
+        update_item_encoded = jsonable_encoder(item_request)
+        db_item.name = update_item_encoded['name']
+        db_item.price = update_item_encoded['price']
+        db_item.description = update_item_encoded['description']
+        db_item.store_id = update_item_encoded['store_id']
+        return await StudentsRepo.update(db=db, item_data=db_item)
+    else:
+        raise HTTPException(status_code=400, detail="Item not found with the given ID")
